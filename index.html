@@ -1,133 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choropleth Map of U.S. Counties Population</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-        }
-
-        #map-container {
-            width: 100%;
-            height: 100vh;
-        }
-
-        .county {
-            stroke: #fff;
-            stroke-width: 0.5;
-            fill: #ddd;
-        }
-
-        .county:hover {
-            fill: orange;
-        }
-
-        .legend {
-            font-size: 12px;
-        }
-
-        #tooltip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 5px;
-            border-radius: 4px;
-            pointer-events: none;
-            font-size: 12px;
-            display: none;
-        }
-    </style>
-</head>
-<body>
-
-    <h1 style="text-align:center;">Choropleth Map of U.S. Counties Population</h1>
-
-    <div id="map-container"></div>
-    <div id="tooltip"></div>
-
-    <script>
-        // Set up the dimensions and margins for the map
-        const width = window.innerWidth;
-        const height = window.innerHeight - 50;
-
-        // Create an SVG container for the map
-        const svg = d3.select("#map-container")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-        // Simple population data for U.S. counties (use a real dataset here)
-        const counties = [
-            { name: "Los Angeles", x: 100, y: 100, width: 100, height: 100, population: 10000000 },
-            { name: "Cook", x: 250, y: 100, width: 100, height: 100, population: 5000000 },
-            { name: "Harris", x: 400, y: 100, width: 100, height: 100, population: 4000000 },
-            { name: "Maricopa", x: 550, y: 100, width: 100, height: 100, population: 3000000 },
-            { name: "San Diego", x: 100, y: 250, width: 100, height: 100, population: 3300000 },
-            // Add more counties here with relevant population data
-        ];
-
-        // Color scale for population
-        const colorScale = d3.scaleQuantize()
-            .domain([0, d3.max(counties, d => d.population)]) // Set the domain to the max population
-            .range(d3.schemeBlues[9]);
-
-        // Draw counties as rectangles (simplified representation)
-        svg.selectAll(".county")
-            .data(counties)
-            .enter()
-            .append("rect")
-            .attr("class", "county")
-            .attr("x", d => d.x)
-            .attr("y", d => d.y)
-            .attr("width", d => d.width)
-            .attr("height", d => d.height)
-            .style("fill", d => colorScale(d.population))
-            .on("mouseover", function(event, d) {
-                const tooltip = d3.select("#tooltip");
-                tooltip.style("display", "block")
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 10) + "px")
-                    .text(`${d.name}: ${d.population.toLocaleString()}`);
-                d3.select(this).style("fill", "orange");
-            })
-            .on("mouseout", function() {
-                d3.select("#tooltip").style("display", "none");
-                d3.select(this).style("fill", d => colorScale(d.population));
-            });
-
-        // Add a legend
-        const legendWidth = 300;
-        const legendHeight = 20;
-
-        const legend = svg.append("g")
-            .attr("transform", `translate(${width - legendWidth - 20}, 40)`);
-
-        const legendScale = d3.scaleLinear()
-            .domain([0, d3.max(counties, d => d.population)])
-            .range([0, legendWidth]);
-
-        legend.selectAll("rect")
-            .data(d3.range(9))
-            .enter()
-            .append("rect")
-            .attr("x", d => legendScale(d * d3.max(counties, d => d.population) / 9))
-            .attr("y", 0)
-            .attr("width", legendWidth / 9)
-            .attr("height", legendHeight)
-            .style("fill", (d) => d3.schemeBlues[9][d]);
-
-        // Add the labels to the legend
-        legend.append("text")
-            .attr("x", legendWidth / 2)
-            .attr("y", legendHeight + 15)
-            .attr("text-anchor", "middle")
-            .text("Population");
-
-    </script>
-
-</body>
+<html>
+  <head>
+    <title>FCC: D3 Choropleth Map</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-scale-chromatic@3.0.0/dist/d3-scale-chromatic.min.js"></script>
+  </head>
+  <body>
+    <div id="main">
+      <h1 id="title">United States Educational Attainment</h1>
+      <div id="description">
+        Percentage of adults age 25 and older with a bachelor's degree or higher
+        (2010-2014)
+      </div>
+      <svg width="960" height="600"></svg>
+      <div id="source">
+        Source:
+        <a
+          href="https://www.ers.usda.gov/data-products/county-level-data-sets/download-data.aspx"
+          >USDA Economic Research Service</a
+        >
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>
