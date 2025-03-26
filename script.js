@@ -4,7 +4,7 @@
 // eslint-disable-next-line no-unused-vars
 const projectName = 'choropleth';
 
-// coded by @paycoguy & @ChristianPaul (github)
+
 
 // Define body
 var body = d3.select('body');
